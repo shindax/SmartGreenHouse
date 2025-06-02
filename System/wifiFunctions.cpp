@@ -3,6 +3,9 @@
 
 //#define DEBUG 1
 
+#ifndef WIFI_FUNCTIONS_CPP
+#define WIFI_FUNCTIONS_CPP
+
 void wiFiConnect( const char* ssid, const char* password )
 {
   int pass = 0;
@@ -28,3 +31,5 @@ String leaveOneDigitAfterTheDecimalPoint( float val )
   newVal += fraction;
   return newVal;
 }// String leaveOneDigitAfterTheDecimalPoint( float val )
+
+#endif

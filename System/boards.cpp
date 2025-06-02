@@ -1,5 +1,8 @@
 #include "boards.h"
 
+#ifndef BOARDS_CPP
+#define BOARDS_CPP
+
 board boards[] = {
                     { "WITTY-1",            "F4:CF:A2:6A:FE:31" },
                     { "WITTY-2",            "3C:61:05:DA:F5:1D" },
@@ -27,3 +30,5 @@ const char * getBoardName( String MAC )
   
   return MAC.c_str();
 }
+
+#endif

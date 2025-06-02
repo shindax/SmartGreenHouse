@@ -1,3 +1,6 @@
+#ifndef WIFI_SETTINGS_H
+#define WIFI_SETTINGS_H
+
 #ifdef WORK_WI_FI
 #define SSID      "OOO OKB Mikron"; 
 #define PASSWORD  "7d2_495N"; 
@@ -17,3 +20,5 @@
 void wiFiConnect( const char* ssid, const char* password );
 String getBoardMAC( void );
 const char * getBoardName( String MAC );
+
+#endif
