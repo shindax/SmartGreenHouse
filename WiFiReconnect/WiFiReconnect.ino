@@ -45,6 +45,12 @@ ESP8266WebServer server(80); //Server on port 80
 String RSSI = "";
 int count = 0;
 
+
+void handleReset( void )
+{
+  count = 0;
+}
+
 void handleRoot( void ) 
 {
 #ifdef DEBUG
@@ -58,7 +64,8 @@ void handleRoot( void )
  s += "<span>";
  s += "pass: ";
  s += String( count );
- s += "</span>";
+ s += "</span><br>";
+ s += "<span>Click to <a href='reset'>reset</a></span><br>";
  s += "<hr></center>";
  server.send(200, "text/html", s); //Send web page
 }
@@ -101,6 +108,7 @@ void setup()
   Serial.println(WiFi.RSSI());
   
   server.on("/", handleRoot);
+  server.on("/reset", handleReset); //as Per  <a href="ledOn">, Subroutine to be called
   server.begin();
 }
 
