@@ -13,6 +13,8 @@
 #include <WiFiClient.h>
 #include <ESP8266WebServer.h>
 
+//#define DEBUG 1
+
 #define RED_LED   15
 #define GREEN_LED 12
 #define BLUE_LED  13
@@ -38,12 +40,17 @@ unsigned long previousMillis = 0;
 unsigned long interval = 2000;
 ESP8266WebServer server(80); //Server on port 80
 
+String RSSI = "";
+
 void handleRoot( void ) 
 {
+#ifdef DEBUG
  Serial.println("You called root page");
- String s = "<style>h1{font-size:72pt;}</style>";
+#endif 
+ String s = "<style>h1{font-size:100pt;}</style>";
+ s += "<script>setInterval(() => location.reload(), 2000);</script>";
  s += "<center><h1>RSSI: ";
- s += WiFi.RSSI();
+ s += RSSI;
  s += "</h1><hr></center>";
  server.send(200, "text/html", s); //Send web page
 }
@@ -92,7 +99,8 @@ void setup()
 void loop( void ) 
 {
   static int count = 0;
-  
+  int rssi;
+
   //print the Wi-Fi status every 30 seconds
   unsigned long currentMillis = millis();
   if (currentMillis - previousMillis >=interval){
@@ -103,8 +111,13 @@ void loop( void )
         RED_LED_ON;
         break;
       case WL_CONNECTED:
+      rssi = 100 + WiFi.RSSI();
+      RSSI = String( rssi ) + String("dB");
+
+#ifdef DEBUG
         Serial.print("Connection successfully established with IP address: ");
         Serial.println(WiFi.localIP());
+#endif        
         ALL_LEDS_OFF;
         GREEN_LED_ON;
         break;
@@ -114,15 +127,18 @@ void loop( void )
         BLUE_LED_ON;
         break;
     }// switch (WiFi.status()){
+
+#ifdef DEBUG
     Serial.printf("Connection status: %d\n", WiFi.status());
     Serial.print("RRSI: ");
     Serial.println(WiFi.RSSI());
 
     Serial.print("count: ");
-    Serial.println( count ++ );
-    
+    Serial.println( count );
+#endif
     previousMillis = currentMillis;
   }// if (currentMillis - previousMillis >=interval){
 
+  count ++;
   server.handleClient();
 }// void loop( void ) 
