@@ -13,7 +13,7 @@
 #include <WiFiClient.h>
 #include <ESP8266WebServer.h>
 
-//#define DEBUG 1
+#define DEBUG 1
 
 #define RED_LED   15
 #define GREEN_LED 12
@@ -29,10 +29,10 @@
 #define ALL_LEDS_OFF digitalWrite(GREEN_LED, LOW); digitalWrite(RED_LED, LOW); digitalWrite(BLUE_LED, LOW);
 
 // Replace with your network credentials
-// const char* ssid = "shRedmiNote";
-// const char* password = "shindax110";
-const char* ssid = "OOO OKB Mikron";
-const char* password = "7d2_495N";
+const char* ssid = "shRedmiNote";
+const char* password = "shindax110";
+// const char* ssid = "OOO OKB Mikron";
+// const char* password = "7d2_495N";
 // const char* ssid = "MERCUSYS_666C";
 // const char* password = "79701846";
 // const char* ssid = "shAsus";
@@ -45,27 +45,22 @@ ESP8266WebServer server(80); //Server on port 80
 String RSSI = "";
 int count = 0;
 
-
-void handleReset( void )
-{
-  count = 0;
-}
-
 void handleRoot( void ) 
 {
 #ifdef DEBUG
  Serial.println("You called root page");
 #endif 
  String s = "<style>h1{font-size:100pt;margin-bottom:10px}span{font-size:80pt;}</style>";
- s += "<script>setInterval(() => location.reload(), 1000);</script>";
- s += "<center><h1>RSSI: ";
- s += RSSI;
- s += "</h1>";
- s += "<span>";
- s += "pass: ";
- s += String( count );
- s += "</span><br>";
- s += "<span>Click to <a href='reset'>reset</a></span><br>";
+
+ s += "<script>";
+ s += "setInterval(function(){let count = parseInt(document.getElementById('count').textContent); count ++; document.getElementById('count').textContent = count; }, 1000);";
+ s += "setInterval(function(){ document.getElementById('rssi').innerHTML = '";
+ s += "'; }, 1000);";
+ s += "</script>";
+ 
+ s += "<center><h1 id='rssi'></h1>";
+ s += "<span>pass: </span>";
+ s += "<span id='count'>1</span><br>";
  s += "<hr></center>";
  server.send(200, "text/html", s); //Send web page
 }
@@ -108,7 +103,6 @@ void setup()
   Serial.println(WiFi.RSSI());
   
   server.on("/", handleRoot);
-  server.on("/reset", handleReset); //as Per  <a href="ledOn">, Subroutine to be called
   server.begin();
 }
 
@@ -127,7 +121,7 @@ void loop( void )
         break;
       case WL_CONNECTED:
       rssi = 100 + WiFi.RSSI();
-      RSSI = String( rssi ) + String("dB");
+      RSSI = String("RSSI: ") + String( rssi ) + String("dB");
 
 #ifdef DEBUG
         Serial.print("Connection successfully established with IP address: ");
