@@ -10,13 +10,43 @@
 */
 
 #include <ESP8266WiFi.h>
+#include <WiFiClient.h>
+#include <ESP8266WebServer.h>
+
+#define RED_LED   15
+#define GREEN_LED 12
+#define BLUE_LED  13
+
+#define RED_LED_ON digitalWrite(RED_LED, HIGH);
+#define RED_LED_OFF digitalWrite(RED_LED, LOW);
+#define GREEN_LED_ON digitalWrite(GREEN_LED, HIGH);
+#define GREEN_LED_OFF digitalWrite(GREEN_LED, LOW);
+#define BLUE_LED_ON digitalWrite(BLUE_LED, HIGH);
+#define BLUE_LED_OFF digitalWrite(BLUE_LED, LOW);
+
+#define ALL_LEDS_OFF digitalWrite(GREEN_LED, LOW); digitalWrite(RED_LED, LOW); digitalWrite(BLUE_LED, LOW);
 
 // Replace with your network credentials
 const char* ssid = "shRedmiNote";
 const char* password = "shindax110";
+// const char* ssid = "OOO OKB Mikron";
+// const char* password = "7d2_495N";
+// const char* ssid = "MERCUSYS_666C";
+// const char* password = "79701846";
 
 unsigned long previousMillis = 0;
 unsigned long interval = 2000;
+ESP8266WebServer server(80); //Server on port 80
+
+void handleRoot( void ) 
+{
+ Serial.println("You called root page");
+ String s = "<style>h1{font-size:72pt;}</style>";
+ s += "<center><h1>RSSI: ";
+ s += WiFi.RSSI();
+ s += "</h1><hr></center>";
+ server.send(200, "text/html", s); //Send web page
+}
 
 void initWiFi( void ) 
 {
@@ -34,28 +64,54 @@ void initWiFi( void )
   WiFi.persistent(true);
 }// void initWiFi( void )
 
-void setup() {
+  // Serial.print("WL_IDLE_STATUS      = 0\n"
+  //              "WL_NO_SSID_AVAIL    = 1\n"
+  //              "WL_SCAN_COMPLETED   = 2\n"
+  //              "WL_CONNECTED        = 3\n"
+  //              "WL_CONNECT_FAILED   = 4\n"
+  //              "WL_CONNECTION_LOST  = 5\n"
+  //              "WL_WRONG_PASSWORD   = 6\n"
+  //              "WL_DISCONNECTED     = 7\n");
+
+void setup() 
+{
+  pinMode( RED_LED, OUTPUT );
+  pinMode( GREEN_LED, OUTPUT );
+  pinMode( BLUE_LED, OUTPUT );  
+  ALL_LEDS_OFF;
+
   Serial.begin(115200);
   initWiFi();
   Serial.print("RSSI: ");
   Serial.println(WiFi.RSSI());
+  
+  server.on("/", handleRoot);
+  server.begin();
 }
 
 void loop( void ) 
 {
   static int count = 0;
+  
   //print the Wi-Fi status every 30 seconds
   unsigned long currentMillis = millis();
   if (currentMillis - previousMillis >=interval){
     switch (WiFi.status()){
       case WL_NO_SSID_AVAIL:
         Serial.println("Configured SSID cannot be reached");
+        ALL_LEDS_OFF;
+        RED_LED_ON;
         break;
       case WL_CONNECTED:
-        Serial.println("Connection successfully established");
+        Serial.print("Connection successfully established with IP address: ");
+        Serial.println(WiFi.localIP());
+        ALL_LEDS_OFF;
+        GREEN_LED_ON;
         break;
-      case WL_CONNECT_FAILED:
+      case WL_DISCONNECTED:
         Serial.println("Connection failed");
+        ALL_LEDS_OFF;        
+        BLUE_LED_ON;
         break;
     }// switch (WiFi.status()){
     Serial.printf("Connection status: %d\n", WiFi.status());
@@ -64,7 +120,9 @@ void loop( void )
 
     Serial.print("count: ");
     Serial.println( count ++ );
-
+    
     previousMillis = currentMillis;
   }// if (currentMillis - previousMillis >=interval){
+
+  server.handleClient();
 }// void loop( void ) 
