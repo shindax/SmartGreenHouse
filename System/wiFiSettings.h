@@ -20,5 +20,6 @@
 void wiFiConnect( const char* ssid, const char* password );
 String getBoardMAC( void );
 const char * getBoardName( String MAC );
+void initWiFi( void );
 
 #endif

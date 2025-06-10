@@ -5,7 +5,7 @@
 
 board boards[] = {
                     { "WITTY-1",            "F4:CF:A2:6A:FE:31", "WITTY-1-hostname"},
-                    { "WITTY-2",            "3C:61:05:DA:F5:1D", "WITTY-2-hostname"},
+                    { "WITTY-2",            "3C:61:05:DA:F5:1D", "WITTY-2-caisson"},
                     { "ESP-01-1",           "68-C6-3A-C8-3A-39", "ESP-01-1-bath-thermostat"},
                     { "ESP-01-2",           "18:FE:34:98:DF:82", "ESP-01-2-hostname"},
                     { "ESP-01S-3",          "94:B9:7E:17:AD:9C", "ESP-01S-3-hostname"},

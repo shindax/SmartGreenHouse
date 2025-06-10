@@ -22,6 +22,24 @@ void wiFiConnect( const char* ssid, const char* password )
 }// void wiFiConnect( void )
 
 
+void initWiFi( void ) 
+{
+  static int count = 0;
+  WiFi.mode(WIFI_STA);
+  WiFi.hostname(getBoardHostName(getBoardMAC()));
+
+  WiFi.begin(SSID, PASSWORD);
+  Serial.print("Connecting to WiFi ..");
+  while (WiFi.status() != WL_CONNECTED && count ++ <= 10 ) {
+    Serial.print('.');
+    delay(1000);
+  }
+  Serial.println(WiFi.localIP());
+  //The ESP8266 tries to reconnect automatically when the connection is lost
+  WiFi.setAutoReconnect(true);
+  WiFi.persistent(true);
+}// void initWiFi( void )
+
 String leaveOneDigitAfterTheDecimalPoint( float val )
 {
   int intVal = val;
@@ -31,5 +49,6 @@ String leaveOneDigitAfterTheDecimalPoint( float val )
   newVal += fraction;
   return newVal;
 }// String leaveOneDigitAfterTheDecimalPoint( float val )
+
 
 #endif

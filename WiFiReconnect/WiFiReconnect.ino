@@ -13,13 +13,11 @@
 #include <WiFiClient.h>
 #include <ESP8266WebServer.h>
 
-// #define WORK_WI_FI
-#define MY_REDME_WI_FI 1
+#define WORK_WI_FI
+// #define MY_REDME_WI_FI 1
+// #define GREENHOUSE_WI_FI
 
-#include "d:\Projects\Arduino\SmartGreenHouse\System\wiFiSettings.h"
-#include "d:\Projects\Arduino\SmartGreenHouse\System\wifiFunctions.cpp"
-#include "d:\Projects\Arduino\SmartGreenHouse\System\boards.h"
-#include "d:\Projects\Arduino\SmartGreenHouse\System\boards.cpp"
+#include "systemSettings.h"
 
 #define DEBUG 1
 
@@ -29,8 +27,10 @@
 
 #define RED_LED_ON digitalWrite(RED_LED, HIGH);
 #define RED_LED_OFF digitalWrite(RED_LED, LOW);
+
 #define GREEN_LED_ON digitalWrite(GREEN_LED, HIGH);
 #define GREEN_LED_OFF digitalWrite(GREEN_LED, LOW);
+
 #define BLUE_LED_ON digitalWrite(BLUE_LED, HIGH);
 #define BLUE_LED_OFF digitalWrite(BLUE_LED, LOW);
 
@@ -62,24 +62,6 @@ void handleRoot( void )
  s += "<hr></center>";
  server.send(200, "text/html", s); //Send web page
 }
-
-void initWiFi( void ) 
-{
-  static int count = 0;
-  WiFi.mode(WIFI_STA);
-  WiFi.hostname(getBoardHostName(getBoardMAC()));
-
-  WiFi.begin(SSID, PASSWORD);
-  Serial.print("Connecting to WiFi ..");
-  while (WiFi.status() != WL_CONNECTED && count ++ <= 10 ) {
-    Serial.print('.');
-    delay(1000);
-  }
-  Serial.println(WiFi.localIP());
-  //The ESP8266 tries to reconnect automatically when the connection is lost
-  WiFi.setAutoReconnect(true);
-  WiFi.persistent(true);
-}// void initWiFi( void )
 
   // Serial.print("WL_IDLE_STATUS      = 0\n"
   //              "WL_NO_SSID_AVAIL    = 1\n"
