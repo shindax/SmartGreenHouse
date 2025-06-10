@@ -13,6 +13,14 @@
 #include <WiFiClient.h>
 #include <ESP8266WebServer.h>
 
+// #define WORK_WI_FI
+#define MY_REDME_WI_FI 1
+
+#include "d:\Projects\Arduino\SmartGreenHouse\System\wiFiSettings.h"
+#include "d:\Projects\Arduino\SmartGreenHouse\System\wifiFunctions.cpp"
+#include "d:\Projects\Arduino\SmartGreenHouse\System\boards.h"
+#include "d:\Projects\Arduino\SmartGreenHouse\System\boards.cpp"
+
 #define DEBUG 1
 
 #define RED_LED   15
@@ -27,16 +35,6 @@
 #define BLUE_LED_OFF digitalWrite(BLUE_LED, LOW);
 
 #define ALL_LEDS_OFF digitalWrite(GREEN_LED, LOW); digitalWrite(RED_LED, LOW); digitalWrite(BLUE_LED, LOW);
-
-// Replace with your network credentials
-const char* ssid = "shRedmiNote";
-const char* password = "shindax110";
-// const char* ssid = "OOO OKB Mikron";
-// const char* password = "7d2_495N";
-// const char* ssid = "MERCUSYS_666C";
-// const char* password = "79701846";
-// const char* ssid = "shAsus";
-// const char* password = "StanislavShendakov7036";
 
 unsigned long previousMillis = 0;
 unsigned long interval = 2000;
@@ -69,7 +67,9 @@ void initWiFi( void )
 {
   static int count = 0;
   WiFi.mode(WIFI_STA);
-  WiFi.begin(ssid, password);
+  WiFi.hostname(getBoardHostName(getBoardMAC()));
+
+  WiFi.begin(SSID, PASSWORD);
   Serial.print("Connecting to WiFi ..");
   while (WiFi.status() != WL_CONNECTED && count ++ <= 10 ) {
     Serial.print('.');
@@ -122,10 +122,11 @@ void loop( void )
       case WL_CONNECTED:
       rssi = 100 + WiFi.RSSI();
       RSSI = String("RSSI: ") + String( rssi ) + String("dB");
-
 #ifdef DEBUG
         Serial.print("Connection successfully established with IP address: ");
         Serial.println(WiFi.localIP());
+        Serial.print("Hostname: ");
+        Serial.println(WiFi.hostname());
 #endif        
         ALL_LEDS_OFF;
         GREEN_LED_ON;
@@ -148,6 +149,5 @@ void loop( void )
     previousMillis = currentMillis;
     count ++;
   }// if (currentMillis - previousMillis >=interval){
-
   server.handleClient();
 }// void loop( void ) 
